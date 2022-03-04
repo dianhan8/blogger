@@ -2,6 +2,10 @@ const Pencarian = () => {
   const { useState } = React;
   const [visible, setVisible] = useState(false);
 
+  const classModal = classNames('fixed z-10 inset-0 overflow-y-auto', {
+    'invisible': !visible,
+  })
+
   const classOverplay = classNames(
     "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity",
     {
@@ -30,7 +34,7 @@ const Pencarian = () => {
       </button>
 
       <div
-        className="fixed z-10 inset-0 overflow-y-auto"
+        className={classModal}
         ria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
