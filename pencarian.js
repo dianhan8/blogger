@@ -1,6 +1,8 @@
 const Pencarian = () => {
   const { useState } = React;
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [listPosts, setListPosts] = useState([]);
 
   const classModal = classNames('fixed z-10 inset-0 overflow-y-auto', {
     'invisible': !visible,
@@ -15,7 +17,7 @@ const Pencarian = () => {
   );
 
   const classContentModal = classNames(
-    "relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full",
+    "relative mx-auto w-full max-w-2xl rounded-lg bg-white shadow-xl",
     {
       "opacity-0 ease-out duration-200 translate-y-4 sm:translate-y-0 sm:scale-95":
         !visible,
@@ -23,6 +25,31 @@ const Pencarian = () => {
         visible,
     }
   );
+
+  async function getPostByKeyword(query) {
+    const url = 'https://www.googleapis.com/blogger/v3/blogs/839057407940192023/posts/search?key=AIzaSyCiiU5S07er5yz_b6rQTXTVvCkqE46zYHY&q=';
+    setIsLoading(true);
+
+    try {
+      const res = await axios.get(url, {
+        params: {
+          q: query,
+          fetchBodies: false,
+        },
+      });
+      setListPosts(get(res, "data.items", []));
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  }
+
+  function handleChange(event) {
+    if (event.target.value) {
+      getPostByKeyword(event.target.value);
+    }
+  }
 
   return (
     <div>
@@ -48,55 +75,73 @@ const Pencarian = () => {
             &#8203;
           </span>
           <div className={classContentModal}>
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <div className="relative mx-auto w-full max-w-2xl rounded-lg bg-white shadow-xl">
+              <div className="flex w-full items-center px-6 py-4">
+                {isLoading ? (
                   <svg
-                    className="h-6 w-6 text-red-600"
+                    className="h-6 w-6 animate-spin text-blue-500"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-6 w-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeidth="2"
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
                     />
                   </svg>
-                </div>
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3
-                    className="text-lg leading-6 font-medium text-gray-900"
-                    id="modal-title"
-                  >
-                    Deactivate account
-                  </h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to deactivate your account? All of
-                      your data will be permanently removed. This action cannot
-                      be undone.
-                    </p>
-                  </div>
-                </div>
+                )}
+                <input
+                  className="w-full px-4 py-2 font-inter text-base focus:outline-none"
+                  placeholder="Pencarian"
+                  onChange={debounce(handleChange, 500)}
+                />
+                <button
+                  onClick={() => setVisible(false)}
+                  className="rounded-lg border border-gray-300 px-2 py-1 font-inter text-xs font-semibold text-black hover:shadow-lg"
+                >
+                  ESC
+                </button>
               </div>
-            </div>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                type="button"
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-              >
-                Deactivate
-              </button>
-              <button
-                type="button"
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-              >
-                Cancel
-              </button>
+
+              <ul className="mb-4">
+                {listPosts.map((items, index) => {
+                  return (
+                    <a key={index} href={`/blog/${items.id}`}>
+                      <li
+                        className="cursor-pointer space-y-2 px-4 py-2 hover:bg-gray-100"
+                        role="button"
+                      >
+                        <label className="rounded-md bg-gray-300 px-2 py-1 font-inter text-xs text-black">
+                          Postingan
+                        </label>
+                        <p className="font-inter text-sm">{items.title}</p>
+                      </li>
+                    </a>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         </div>
