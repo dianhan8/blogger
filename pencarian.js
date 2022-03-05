@@ -17,7 +17,7 @@ const Pencarian = () => {
   );
 
   const classContentModal = classNames(
-    "relative mx-auto w-full max-w-2xl rounded-lg bg-white shadow-xl",
+    "relative mx-auto w-full max-w-2xl rounded-lg bg-white shadow-xl align-middle",
     {
       "opacity-0 ease-out duration-200 translate-y-4 sm:translate-y-0 sm:scale-95":
         !visible,
