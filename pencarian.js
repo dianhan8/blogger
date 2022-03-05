@@ -38,7 +38,7 @@ const Pencarian = () => {
           fetchBodies: false,
         },
       });
-      setListPosts(get(res, "data.items", []));
+      setListPosts(_.get(res, "data.items", []));
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -122,7 +122,7 @@ const Pencarian = () => {
             <ul className="mb-4">
               {listPosts.map((items, index) => {
                 return (
-                  <a key={index} href={`/blog/${items.id}`}>
+                  <a key={index} href={items.url}>
                     <li
                       className="cursor-pointer space-y-2 px-4 py-2 hover:bg-gray-100"
                       role="button"
