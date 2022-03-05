@@ -115,7 +115,7 @@ const Pencarian = () => {
                 <input
                   className="w-full px-4 py-2 font-inter text-base focus:outline-none"
                   placeholder="Pencarian"
-                  onChange={debounce(handleChange, 500)}
+                  onChange={_.debounce(handleChange, 500)}
                 />
                 <button
                   onClick={() => setVisible(false)}
